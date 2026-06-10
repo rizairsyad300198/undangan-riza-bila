@@ -175,7 +175,7 @@ function showToast(msg) {
 }
 
 // ===== GOOGLE SHEETS API =====
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzjRLg8EB79Bz1t9aq6zyETXuplLCipUWMHMUii8kWV871z87clEwk8Ziaw8Dxc-Izp/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyPA89u9CzCQoy0euy6TdErCK1pHKYUQ9C-vsUhTPhVBPyS73AhOXQmICSwq3L9zq9W/exec';
 
 // ===== SUBMIT WISH =====
 document.getElementById('wish-status').addEventListener('change', function() {
