@@ -198,23 +198,30 @@ function submitWish() {
   btnSpan.textContent = 'Mengirim...';
   btn.disabled = true;
 
-  // Google Apps Script tidak support POST dengan JSON langsung dari browser (CORS),
-  // pakai no-cors + FormData trick lewat URL params
   const params = new URLSearchParams({ name, status, count: finalCount, text });
-  fetch(GAS_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' })
-    .then(() => {
-      showToast('Ucapan terkirim! 💕');
-      document.getElementById('wish-text').value = '';
-      document.getElementById('wish-status').value = '';
-      document.getElementById('guest-count').value = '';
-      btn.disabled = false;
-      btnSpan.textContent = 'Kirim Ucapan ✦';
-      setTimeout(() => loadComments(), 1500);
+  
+  // Using GET method without 'no-cors', similar to how loadComments works.
+  fetch(GAS_URL + '?' + params.toString(), { method: 'GET' })
+    .then(response => {
+      // A successful submission to GAS often results in a redirect, which fetch handles.
+      // We can assume success if the request doesn't throw an error.
+      if (response.ok || response.type === 'opaque') {
+        showToast('Ucapan terkirim! 💕');
+        document.getElementById('wish-text').value = '';
+        document.getElementById('wish-status').value = '';
+        document.getElementById('guest-count').value = '';
+        setTimeout(() => loadComments(), 1500);
+      } else {
+        throw new Error('Server responded with an error.');
+      }
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error('Error:', error);
       showToast('Gagal mengirim, coba lagi.');
-      btn.disabled = false;
-      btnSpan.textContent = 'Kirim Ucapan ✦';
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btnSpan.textContent = 'Kirim Ucapan ✦';
     });
 }
 
