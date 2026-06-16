@@ -251,3 +251,17 @@ function loadComments() {
     })
     .catch(() => {});
 }
+
+// Menghilangkan loading overlay saat halaman sudah termuat penuh
+window.addEventListener('load', function() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        // Mulai proses fade out
+        overlay.style.opacity = '0';
+
+        // Sembunyikan overlay setelah transisi selesai
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 800); // Sesuaikan dengan durasi transisi di CSS (0.8s)
+    }
+});
