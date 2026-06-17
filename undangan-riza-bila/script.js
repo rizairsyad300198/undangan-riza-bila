@@ -252,16 +252,77 @@ function loadComments() {
     .catch(() => {});
 }
 
-// Menghilangkan loading overlay saat halaman sudah termuat penuh
-window.addEventListener('load', function() {
-    const overlay = document.getElementById('loading-overlay');
-    if (overlay) {
-        // Mulai proses fade out
-        overlay.style.opacity = '0';
+// ===== PRELOAD ALL IMAGES BEFORE HIDING LOADER =====
+// Loader akan menunggu SEMUA foto (termasuk yang loading="lazy" di galeri)
+// benar-benar selesai didownload browser, supaya saat undangan dibuka,
+// tidak ada lagi foto yang masih buffering/blank.
+function preloadAllImages() {
+  // Kumpulkan semua URL gambar yang dipakai di halaman:
+  // 1. Semua tag <img src="...">
+  // 2. Background image opening (assets/bg/opening.jpg) sudah otomatis lewat preload tag,
+  //    tapi kita ikutkan juga supaya benar-benar ditunggu oleh Promise.
+  const imgUrls = new Set();
 
-        // Sembunyikan overlay setelah transisi selesai
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, 800); // Sesuaikan dengan durasi transisi di CSS (0.8s)
-    }
-});
+  document.querySelectorAll('img[src]').forEach(img => {
+    if (img.src) imgUrls.add(img.src);
+  });
+
+  // Background opening.jpg (didefinisikan lewat CSS, bukan tag <img>)
+  imgUrls.add(new URL('assets/bg/opening.jpg', window.location.href).href);
+
+  const urls = Array.from(imgUrls);
+  const total = urls.length;
+  let loadedCount = 0;
+
+  updateLoaderProgress(0, total);
+
+  const loadPromises = urls.map(src => {
+    return new Promise(resolve => {
+      const tester = new Image();
+      tester.onload = () => {
+        loadedCount++;
+        updateLoaderProgress(loadedCount, total);
+        resolve();
+      };
+      tester.onerror = () => {
+        // Tetap resolve supaya satu gambar gagal/404 tidak mengunci loader selamanya
+        loadedCount++;
+        updateLoaderProgress(loadedCount, total);
+        resolve();
+      };
+      tester.src = src;
+    });
+  });
+
+  // Safety timeout: kalau ada koneksi sangat lambat, jangan biarkan
+  // pengunjung terjebak di loading screen selamanya (maksimal 12 detik).
+  const timeoutPromise = new Promise(resolve => setTimeout(resolve, 12000));
+
+  Promise.race([Promise.all(loadPromises), timeoutPromise]).then(hideLoader);
+}
+
+function updateLoaderProgress(loaded, total) {
+  const percentEl = document.getElementById('loading-percent');
+  if (percentEl && total > 0) {
+    const pct = Math.round((loaded / total) * 100);
+    percentEl.textContent = pct + '%';
+  }
+}
+
+function hideLoader() {
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+      overlay.style.display = 'none';
+    }, 800); // Samakan dengan durasi transisi di CSS (0.8s)
+  }
+}
+
+// Mulai preload sesegera mungkin (tidak perlu menunggu window 'load')
+// supaya proses download gambar berjalan paralel sedari awal.
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  preloadAllImages();
+} else {
+  document.addEventListener('DOMContentLoaded', preloadAllImages);
+}
