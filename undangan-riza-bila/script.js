@@ -17,18 +17,18 @@ document.querySelectorAll('a, button, .gallery-item, .couple-card, .bank-card').
 });
 
 // ===== PARTICLES =====
-(function() {
+(function () {
   const c = document.getElementById('particles');
   for (let i = 0; i < 25; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     const size = Math.random() * 2.5 + 0.5;
     p.style.cssText = `
-      left:${Math.random()*100}%;
+      left:${Math.random() * 100}%;
       width:${size}px; height:${size}px;
-      background: rgba(201,169,110,${Math.random()*0.4+0.1});
-      animation-duration:${Math.random()*18+12}s;
-      animation-delay:${Math.random()*10}s;
+      background: rgba(201,169,110,${Math.random() * 0.4 + 0.1});
+      animation-duration:${Math.random() * 18 + 12}s;
+      animation-delay:${Math.random() * 10}s;
     `;
     c.appendChild(p);
   }
@@ -58,7 +58,7 @@ function toggleMusic() {
     wave.classList.add('paused');
     label.textContent = 'MUSIC';
   } else {
-    music.play().catch(() => {});
+    music.play().catch(() => { });
     wave.classList.remove('paused');
     label.textContent = 'ON';
   }
@@ -67,13 +67,13 @@ function toggleMusic() {
 document.addEventListener('visibilitychange', () => {
   const m = document.getElementById('bg-music');
   if (document.hidden) m.pause();
-  else if (isPlaying) m.play().catch(() => {});
+  else if (isPlaying) m.play().catch(() => { });
 });
 
 // ===== OPEN INVITATION =====
 function openInvitation() {
   document.getElementById('opening').classList.add('hidden');
-  document.getElementById('bg-music').play().catch(() => {});
+  document.getElementById('bg-music').play().catch(() => { });
   document.getElementById('music-wave').classList.remove('paused');
   document.getElementById('music-label').textContent = 'ON';
   isPlaying = true;
@@ -92,7 +92,7 @@ function setActive(el) {
   el.classList.add('active');
 }
 window.addEventListener('scroll', () => {
-  const ids = ['home','couple','event','gallery','wishes'];
+  const ids = ['home', 'couple', 'event', 'gallery', 'wishes'];
   const scrollY = window.scrollY + window.innerHeight / 2;
   ids.forEach((id, i) => {
     const s = document.getElementById(id);
@@ -108,11 +108,11 @@ function startCountdown() {
   const wed = new Date(2026, 5, 28, 13, 0, 0);
   function upd() {
     const diff = wed - new Date();
-    if (diff <= 0) { ['days','hours','mins','secs'].forEach(id => document.getElementById(id).textContent = '00'); return; }
-    document.getElementById('days').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
-    document.getElementById('hours').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
-    document.getElementById('mins').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
-    document.getElementById('secs').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    if (diff <= 0) { ['days', 'hours', 'mins', 'secs'].forEach(id => document.getElementById(id).textContent = '00'); return; }
+    document.getElementById('days').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
+    document.getElementById('hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+    document.getElementById('mins').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    document.getElementById('secs').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
   }
   upd(); setInterval(upd, 1000);
 }
@@ -153,7 +153,7 @@ function closeLightbox() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
-document.getElementById('lightbox').addEventListener('click', function(e) { if (e.target === this) closeLightbox(); });
+document.getElementById('lightbox').addEventListener('click', function (e) { if (e.target === this) closeLightbox(); });
 
 // ===== COPY =====
 function copyNumber(btn, num) {
@@ -178,7 +178,7 @@ function showToast(msg) {
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwAijyrW1dO4MApioY0X66iYm4QaUzBW8_eBWrGwuRjrXkGP9lhYU6ofxY1_5eF-c_z/exec';
 
 // ===== SUBMIT WISH =====
-document.getElementById('wish-status').addEventListener('change', function() {
+document.getElementById('wish-status').addEventListener('change', function () {
   const count = document.getElementById('guest-count');
   if (this.value === 'tidak') { count.value = '0'; count.disabled = true; }
   else { count.disabled = false; }
@@ -199,7 +199,7 @@ function submitWish() {
   btn.disabled = true;
 
   const params = new URLSearchParams({ name, status, count: finalCount, text });
-  
+
   // Using GET method without 'no-cors', similar to how loadComments works.
   fetch(GAS_URL + '?' + params.toString(), { method: 'GET' })
     .then(response => {
@@ -220,8 +220,8 @@ function submitWish() {
       showToast('Gagal mengirim, coba lagi.');
     })
     .finally(() => {
-        btn.disabled = false;
-        btnSpan.textContent = 'Kirim Ucapan ✦';
+      btn.disabled = false;
+      btnSpan.textContent = 'Kirim Ucapan ✦';
     });
 }
 
@@ -240,16 +240,27 @@ function loadComments() {
         const statusMap = { hadir: 'Hadir', tidak: 'Tidak Hadir', ragu: 'Masih Ragu' };
         el.innerHTML = `
           <div class="comment-header">
-            <div class="comment-avatar">${(item.Nama||'?')[0]}</div>
-            <div class="comment-name">${item.Nama||''}</div>
-            <span class="comment-status ${item.Status}">${statusMap[item.Status]||item.Status}</span>
+            <div class="comment-avatar">
+              ${(item.Nama || '?')
+                .trim()
+                .split(/\s+/)
+                .slice(0, 2)
+                .map(word => word.charAt(0).toUpperCase())
+                .join('')}
+            </div>
+            <div class="comment-name">${item.Nama || ''}</div>
+            <!--
+            <span class="comment-status ${item.Status}">
+              ${statusMap[item.Status] || item.Status}
+            </span>
+            -->
           </div>
           <div class="comment-text">${item.Pesan}</div>
         `;
         list.appendChild(el);
       });
     })
-    .catch(() => {});
+    .catch(() => { });
 }
 
 // ===== PRELOAD ALL IMAGES BEFORE HIDING LOADER =====
@@ -285,7 +296,6 @@ function preloadAllImages() {
         resolve();
       };
       tester.onerror = () => {
-        // Tetap resolve supaya satu gambar gagal/404 tidak mengunci loader selamanya
         loadedCount++;
         updateLoaderProgress(loadedCount, total);
         resolve();
@@ -316,6 +326,28 @@ function hideLoader() {
     setTimeout(() => {
       overlay.style.display = 'none';
     }, 800); // Samakan dengan durasi transisi di CSS (0.8s)
+  }
+}
+
+// ===== ENVELOPE TOGGLE =====
+let envelopeOpened = false;
+
+function toggleEnvelope() {
+  envelopeOpened = !envelopeOpened;
+  const env = document.getElementById('envelope');
+  const reveal = document.getElementById('bank-reveal');
+  const cta = document.getElementById('env-cta');
+
+  if (envelopeOpened) {
+    env.classList.add('opened');
+    cta.textContent = '💌 Terima kasih ✦';
+    setTimeout(() => reveal.classList.add('open'), 650);
+  } else {
+    reveal.classList.remove('open');
+    setTimeout(() => {
+      env.classList.remove('opened');
+      cta.textContent = 'Klik untuk membuka ✦';
+    }, 300);
   }
 }
 

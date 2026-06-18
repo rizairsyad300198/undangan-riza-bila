@@ -1989,69 +1989,110 @@ img.img-fade.loaded { opacity: 1; }
   color: rgba(232,213,176,0.6); font-style: italic; line-height: 1.7;
 }
 
-/* ===== AMPLOP DIGITAL ===== */
-#amplop { background: var(--cream); padding: 10rem 2rem 8rem; position: relative; overflow: hidden; }
-#amplop::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+/* ===== ENVELOPE DIGITAL ===== */
+.envelope-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
 }
-.amplop-intro {
-  max-width: 580px; margin: 0 auto 4rem;
-  font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
-  color: var(--gray); line-height: 1.9; font-style: italic; text-align: center;
+.envelope-outer {
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
 }
-.bank-cards {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem; max-width: 760px; margin: 0 auto;
+.env-body {
+  width: 240px;
+  height: 150px;
+  background: #f5ede0;
+  border: 1.5px solid var(--gold);
+  border-radius: 4px 4px 10px 10px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  margin: 0 auto;
 }
-.bank-card {
-  background: white; padding: 2.5rem;
-  box-shadow: 0 20px 60px rgba(44,27,14,0.08);
-  position: relative; overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  opacity: 0; transform: translateY(30px);
+.envelope-outer:hover .env-body {
+  transform: scale(1.04);
+  box-shadow: 0 8px 32px rgba(201,169,110,0.18);
 }
-.bank-card.up { opacity: 1; transform: translateY(0); }
-.bank-card:hover { transform: translateY(-6px) !important; box-shadow: 0 40px 100px rgba(44,27,14,0.15); }
-.bank-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+.env-flap {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 75px;
+  background: #eddfc9;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-bottom: 1.5px solid var(--gold);
+  transform-origin: top center;
+  transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+  z-index: 2;
 }
-.bank-card::after {
-  content: '';
-  position: absolute; top: -40px; right: -40px;
-  width: 120px; height: 120px; border-radius: 50%;
-  background: radial-gradient(var(--cream-dark), transparent);
-  pointer-events: none;
+.envelope-outer.opened .env-flap {
+  transform: rotateX(180deg) scaleY(-1);
 }
-.bank-logo {
-  font-family: 'Jost', sans-serif; font-size: 1.1rem; font-weight: 500;
-  color: var(--gold-dark); margin-bottom: 1.5rem; letter-spacing: 0.1em;
+.env-letter {
+  position: absolute;
+  bottom: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 78%;
+  transition: transform 0.5s 0.1s ease;
+  z-index: 1;
 }
-.bank-label {
-  font-family: 'Jost', sans-serif; font-size: 0.55rem; font-weight: 300;
-  letter-spacing: 0.3em; color: var(--gray); text-transform: uppercase; margin-bottom: 0.4rem;
+.envelope-outer.opened .env-letter {
+  transform: translateX(-50%) translateY(-60px);
 }
-.bank-number {
-  font-family: 'Playfair Display', serif; font-size: 1.7rem;
-  color: var(--brown); letter-spacing: 0.15em; margin-bottom: 1.5rem;
+.env-letter-inner {
+  background: #fff;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 7px 12px;
+  font-size: 12px;
+  color: var(--brown);
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  white-space: nowrap;
 }
-.bank-info { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-.bank-info-value { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--brown); font-weight: 600; }
-.copy-btn {
-  display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.8rem 1.5rem; border: 1px solid var(--gold);
-  background: transparent; color: var(--gold-dark);
-  font-family: 'Jost', sans-serif; font-size: 0.6rem; font-weight: 300;
-  letter-spacing: 0.2em; text-transform: uppercase; cursor: none;
-  position: relative; overflow: hidden; transition: color 0.4s ease;
+.env-cta {
+  margin-top: 0.75rem;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  transition: opacity 0.3s;
 }
-.copy-btn-fill { position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
-.copy-btn:hover .copy-btn-fill { transform: scaleX(1); }
-.copy-btn:hover, .copy-btn.copied { color: white; }
-.copy-btn span { position: relative; z-index: 1; }
+
+/* Bank reveal animation */
+.bank-reveal {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.7s ease, opacity 0.5s ease;
+  text-align: center;
+}
+.bank-reveal.open {
+  max-height: 700px;
+  opacity: 1;
+}
+.bank-reveal-msg {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 auto 1.5rem;
+  max-width: 400px;
+}
+.env-close-btn {
+  margin-top: 1.5rem;
+  padding: 0.45rem 1.5rem;
+  border: 1px solid rgba(201,169,110,0.3);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.env-close-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
 
 /* ===== FOOTER ===== */
 footer {
