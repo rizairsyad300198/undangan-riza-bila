@@ -242,11 +242,11 @@ function loadComments() {
           <div class="comment-header">
             <div class="comment-avatar">
               ${(item.Nama || '?')
-                .trim()
-                .split(/\s+/)
-                .slice(0, 2)
-                .map(word => word.charAt(0).toUpperCase())
-                .join('')}
+            .trim()
+            .split(/\s+/)
+            .slice(0, 2)
+            .map(word => word.charAt(0).toUpperCase())
+            .join('')}
             </div>
             <div class="comment-name">${item.Nama || ''}</div>
             <!--
@@ -349,6 +349,18 @@ function toggleEnvelope() {
       cta.textContent = 'Klik untuk membuka ✦';
     }, 300);
   }
+}
+
+function switchTab(person, index, btn) {
+  // Update tabs
+  const tabs = document.querySelectorAll(`#tabs-${person} .acc-tab`);
+  tabs.forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Update panels
+  const panels = document.querySelectorAll(`#panels-${person} .acc-panel`);
+  panels.forEach(p => p.classList.remove('active'));
+  panels[index].classList.add('active');
 }
 
 // Mulai preload sesegera mungkin (tidak perlu menunggu window 'load')
