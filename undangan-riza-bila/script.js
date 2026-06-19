@@ -189,8 +189,8 @@ function submitWish() {
   const text = document.getElementById('wish-text').value.trim();
   const status = document.getElementById('wish-status').value;
   const count = document.getElementById('guest-count').value;
-  if (!status) { showToast('Pilih status kehadiran!'); return; }
-  if (status !== 'tidak' && !count) { showToast('Isi jumlah tamu!'); return; }
+  if (!status) { showToast('Dimohon pilih status kehadiran!'); return; }
+  if (status !== 'tidak' && !count) { showToast('Dimohon untuk mengisi jumlah tamu!'); return; }
   const finalCount = status === 'tidak' ? 0 : count;
 
   const btn = document.querySelector('.submit-btn');
