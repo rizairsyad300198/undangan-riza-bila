@@ -105,16 +105,30 @@ window.addEventListener('scroll', () => {
 
 // ===== COUNTDOWN =====
 function startCountdown() {
-  const wed = new Date(2026, 5, 28, 13, 0, 0);
+  const target = new Date(2026, 5, 28, 15, 30, 0);
+
   function upd() {
-    const diff = wed - new Date();
-    if (diff <= 0) { ['days', 'hours', 'mins', 'secs'].forEach(id => document.getElementById(id).textContent = '00'); return; }
-    document.getElementById('days').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
-    document.getElementById('hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-    document.getElementById('mins').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-    document.getElementById('secs').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+    const now = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) return;
+
+    document.getElementById('days').textContent =
+      String(Math.floor(diff / 86400000)).padStart(2, '0');
+
+    document.getElementById('hours').textContent =
+      String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+
+    document.getElementById('mins').textContent =
+      String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+
+    document.getElementById('secs').textContent =
+      String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+
+    requestAnimationFrame(() => setTimeout(upd, 1000));
   }
-  upd(); setInterval(upd, 1000);
+
+  upd();
 }
 
 // ===== SCROLL REVEAL =====
